@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from rest_framework.generics import CreateAPIView
-from .serializers import SignInSerializer, UserCreateSerializer
-from rest_framework.permissions import AllowAny
+from .serializers import SignInSerializer, UserCreateSerializer, UserGetSerializer
+from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -60,4 +60,41 @@ class signin(APIView):
                     'message': 'invalid username or password',
                 }, status=403)
         else:
-            return Response({'message':serializer.errors}, status=400)           
+            return Response({'message':serializer.errors}, status=400)      
+
+
+'''for  auth you must provide
+{
+ "client_id":"lesL0tHw2VuxWdqczKeSEouvCaTlDKWXN5kqeWB8",
+ "client_secret":"ExrRhhu3sPsnzNLLRfY3Ly4b3tQky4Hy4ocJqLkKHvh9i4CyfpciG6fwPDQAA2zHD9jyhdmjbLHe22WzLtF9XEjNr2y2bvINvPPFX6YQ13cEUMOs1vJJMtJCaR3MNKDz",
+ "grant_type":"password",
+ "username":"adhilsalah06@gmail.com",
+ "password":"123"
+}
+
+for refresh token
+
+
+"client_id":"7eHbIvcIBsGKD3mb0P4C1OHu1RrSnsLzlHvuaUu9",
+"client_secret":"Ehes1gWXMKLO4gFUrQtYWSHsz8iXpBTLk86568r7RVpvybln2m9gyoNzt9aM5ew2SKC0mcZ0FyyxZ75UT0FwdYD84Q0xQ0ditJOjV97y9IpKagrCfbtLyw8eeWuQxbrh",
+"grant_type":"refresh_token",
+"refresh_token":"token",
+
+
+'''     
+
+class CurrentUser(APIView):
+   permission_classes = (IsAuthenticated,)
+   def get(self, request):
+        serializer = UserGetSerializer(self.request.user)
+        return Response(serializer.data)
+
+
+
+        '''
+        google
+
+        client id= 369309222265-m5q6ib5ruoj873hli2hl9fq170u2m678.apps.googleusercontent.com
+
+        client secret = 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
+        '''
