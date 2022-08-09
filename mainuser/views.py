@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from rest_framework.generics import CreateAPIView
-from .serializers import SignInSerializer, UserCreateSerializer, UserGetSerializer
+from .serializers import EducationSerializer, ExperienceSerializer, SignInSerializer, UserCreateSerializer, UserGetSerializer, UserProfileCreateSerializer
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework import status
 from rest_framework.response import Response
@@ -9,6 +9,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 from django.http import JsonResponse
 from django.contrib.auth import authenticate
+from rest_framework.parsers import MultiPartParser,FormParser
+from django.views.decorators.csrf import csrf_exempt
 
 
 
@@ -84,17 +86,78 @@ for refresh token
 '''     
 
 class CurrentUser(APIView):
-   permission_classes = (IsAuthenticated,)
-   def get(self, request):
-        serializer = UserGetSerializer(self.request.user)
-        return Response(serializer.data)
+    permission_classes = (IsAuthenticated,)
+    def get(self, request):
+            serializer = UserGetSerializer(self.request.user)
+            return Response(serializer.data)
 
 
 
-        '''
-        google
+'''
+google
 
-        client id= 369309222265-m5q6ib5ruoj873hli2hl9fq170u2m678.apps.googleusercontent.com
+client id= 369309222265-m5q6ib5ruoj873hli2hl9fq170u2m678.apps.googleusercontent.com
 
-        client secret = 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
-        '''
+client secret = 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
+'''
+
+#add user profile
+class CreateProfile(APIView):
+
+    permission_classes=[IsAuthenticated,]
+
+    parser_classes = [MultiPartParser,FormParser]
+    
+    def post(self,request):
+        print(request.data)
+        serializer = UserProfileCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        else:
+
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+
+#add user education            
+
+class CreateEducation(APIView):
+
+    permission_classes=[IsAuthenticated,]
+
+
+    
+    def post(self,request):
+        print(request.data)
+        serializer = EducationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        else:
+
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+#add user experience            
+
+
+class CreateExperience(APIView):
+
+    permission_classes=[IsAuthenticated,]
+
+    
+    
+    def post(self,request):
+        print(request.data)
+        serializer = ExperienceSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        else:
+
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)                        
+
+
+

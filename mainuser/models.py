@@ -1,3 +1,5 @@
+from ast import mod
+import profile
 from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -51,4 +53,45 @@ class NewUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
+
+
+class Userprofile(models.Model):
+
+    user = models.OneToOneField(NewUser,on_delete=models.CASCADE)
+    last_name = models.CharField(max_length=225,blank=True)
+    date_of_birth = models.DateField()
+    profile_photo = models.ImageField(upload_to='media/images/user') 
+    cv = models.FileField(upload_to='media/cv/user')
+    about = models.TextField()
+
+
+    def __str__(self) :
+
+        return self.user.first_name
+
+class Education(models.Model):
+
+    profile = models.ForeignKey(NewUser,on_delete=models.CASCADE)
+    university = models.CharField(max_length=225,null=True)
+    department = models.CharField(max_length=250,null=True)
+    remark = models.CharField(max_length=225,null=True)
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+    def __str__(self):
+
+        return self.profile.email
+class Experience(models.Model):
+    profile = models.ForeignKey(NewUser,on_delete=models.CASCADE)
+    company = models.CharField(max_length=225,null=True)
+    position = models.CharField(max_length=250,null=True)
+    remark_e = models.CharField(max_length=225,null=True)
+    start_date_e = models.DateField()
+    end_date_e = models.DateField()
+    def __str__(self):
+
+        return self.profile.email
+
+
+
 
