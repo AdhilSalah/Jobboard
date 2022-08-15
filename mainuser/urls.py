@@ -18,5 +18,14 @@ urlpatterns = [
     path('profile/createeducation/',CreateEducation.as_view(),name='education'),
     path('profile/createexperience/',CreateExperience.as_view(),name='experiencec'),
     
+    
+    
 
 ]
+
+'''
+/auth/token/    ---- for authentication
+/auth/convert-token ------for social auth
+
+/auth/revoke-token ------userlogout
+'''

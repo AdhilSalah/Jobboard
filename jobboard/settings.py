@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'drf_social_oauth2',
 
     'mainuser',
+    'jobs',
+    'blogs',
 ]
 
 MIDDLEWARE = [
@@ -152,7 +154,9 @@ REST_FRAMEWORK = {
     #'rest_framework_simplejwt.authentication.JWTAuthentication',
     'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  # django-oauth-toolkit >= 1.0.0
     'drf_social_oauth2.authentication.SocialAuthentication',
-    )
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5
 }
 
 

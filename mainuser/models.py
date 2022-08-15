@@ -4,6 +4,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+import datetime
 
 
 class CustomAccountManager(BaseUserManager):
@@ -57,7 +58,7 @@ class NewUser(AbstractBaseUser, PermissionsMixin):
 
 class Userprofile(models.Model):
 
-    user = models.OneToOneField(NewUser,on_delete=models.CASCADE)
+    user = models.OneToOneField(NewUser,on_delete=models.CASCADE,related_name='pro_user_set')
     last_name = models.CharField(max_length=225,blank=True)
     date_of_birth = models.DateField()
     profile_photo = models.ImageField(upload_to='media/images/user') 
@@ -71,7 +72,7 @@ class Userprofile(models.Model):
 
 class Education(models.Model):
 
-    profile = models.ForeignKey(NewUser,on_delete=models.CASCADE)
+    user = models.ForeignKey(NewUser,on_delete=models.CASCADE,related_name='user_set')
     university = models.CharField(max_length=225,null=True)
     department = models.CharField(max_length=250,null=True)
     remark = models.CharField(max_length=225,null=True)
@@ -80,9 +81,9 @@ class Education(models.Model):
 
     def __str__(self):
 
-        return self.profile.email
+        return self.user.email
 class Experience(models.Model):
-    profile = models.ForeignKey(NewUser,on_delete=models.CASCADE)
+    user = models.ForeignKey(NewUser,on_delete=models.CASCADE,related_name='ex_user_set')
     company = models.CharField(max_length=225,null=True)
     position = models.CharField(max_length=250,null=True)
     remark_e = models.CharField(max_length=225,null=True)
@@ -90,7 +91,7 @@ class Experience(models.Model):
     end_date_e = models.DateField()
     def __str__(self):
 
-        return self.profile.email
+        return self.user.email
 
 
 

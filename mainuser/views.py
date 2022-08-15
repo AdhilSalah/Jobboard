@@ -1,6 +1,12 @@
+from unittest import result
+from urllib import response
 from django.http import HttpResponse
 from rest_framework.generics import CreateAPIView
-from .serializers import EducationSerializer, ExperienceSerializer, SignInSerializer, UserCreateSerializer, UserGetSerializer, UserProfileCreateSerializer
+from jobs.models import JobsPosting
+from jobs.serializers import JobsGetSerializer
+
+from mainuser.models import Education
+from .serializers import  EducationGetSerializer, EducationSerializer, ExperienceSerializer, SignInSerializer, UserCreateSerializer, UserGetSerializer, UserProfileCreateSerializer
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework import status
 from rest_framework.response import Response
@@ -10,7 +16,9 @@ from rest_framework.views import APIView
 from django.http import JsonResponse
 from django.contrib.auth import authenticate
 from rest_framework.parsers import MultiPartParser,FormParser
-from django.views.decorators.csrf import csrf_exempt
+
+
+from oauth2_provider.models import RefreshToken
 
 
 
@@ -74,7 +82,7 @@ class signin(APIView):
  "password":"123"
 }
 
-for refresh token
+for refresh token  on path auth/token
 
 
 "client_id":"7eHbIvcIBsGKD3mb0P4C1OHu1RrSnsLzlHvuaUu9",
@@ -89,7 +97,17 @@ class CurrentUser(APIView):
     permission_classes = (IsAuthenticated,)
     def get(self, request):
             serializer = UserGetSerializer(self.request.user)
+            status_code = status.HTTP_200_OK
+
+        
+
+            
+            
+
+            
             return Response(serializer.data)
+
+
 
 
 
@@ -157,7 +175,9 @@ class CreateExperience(APIView):
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         else:
 
-            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)                        
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)  
+
+                            
 
 
 
