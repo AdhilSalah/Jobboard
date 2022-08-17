@@ -23,5 +23,6 @@ urlpatterns = [
     path('auth/',include('rest_framework.urls')),
     path('auth/', include('drf_social_oauth2.urls', namespace='drf')),
     path('jobs/',include('jobs.urls')),
+    path('blog/',include('blogs1.urls')),
 ]
 urlpatterns += static (settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

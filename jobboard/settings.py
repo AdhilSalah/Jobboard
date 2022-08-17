@@ -49,7 +49,7 @@ INSTALLED_APPS = [
 
     'mainuser',
     'jobs',
-    'blogs',
+    'blogs1',
 ]
 
 MIDDLEWARE = [
