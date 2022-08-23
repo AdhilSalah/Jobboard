@@ -37,7 +37,7 @@ class EducationSerializer(serializers.ModelSerializer):
 
         model = Education
 
-        fields =('user','university','department','remark','start_date','end_date')
+        fields =('university','department','remark','start_date','end_date')
 
         def create(self,validated_data):
             user_edu = Education.objects.create(**validated_data)
@@ -49,7 +49,7 @@ class ExperienceSerializer(serializers.ModelSerializer):
 
         model = Experience
 
-        fields =('user','company','position','remark_e','start_date_e','end_date_e')
+        fields =('company','position','remark_e','start_date_e','end_date_e')
 
         def create(self,validated_data):
             user_exp = Experience.objects.create(**validated_data)
@@ -67,7 +67,7 @@ class UserProfileCreateSerializer(serializers.ModelSerializer):
     class Meta:
 
         model = Userprofile
-        fields = ('user','last_name','date_of_birth','profile_photo','cv','about')   
+        fields = ('last_name','date_of_birth','profile_photo','cv','about')   
 
         def create(self,validated_data):
 
@@ -106,7 +106,7 @@ class ExpeienceGetSerializer(serializers.ModelSerializer):
 
     class Meta:
 
-        model = Education
+        model = Experience
         fields = '__all__' 
 
 class ProfilleGetSerializer(serializers.ModelSerializer):
@@ -119,7 +119,7 @@ class ProfilleGetSerializer(serializers.ModelSerializer):
         
 class UserGetSerializer(serializers.ModelSerializer):
 
-    eudcation = EducationGetSerializer(source = 'user_set',many=True)
+    education = EducationGetSerializer(source = 'user_set',many=True)
     experience = ExpeienceGetSerializer(source = 'ex_user_set',many=True)
     userpro = ProfilleGetSerializer(source= 'pro_user_set')
 
@@ -128,4 +128,4 @@ class UserGetSerializer(serializers.ModelSerializer):
 
         model = NewUser
 
-        fields = '__all__'
+        fields = ['email','username','first_name','userpro','experience','education']

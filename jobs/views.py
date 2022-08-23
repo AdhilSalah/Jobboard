@@ -14,6 +14,17 @@ from jobs.serializers import CategorySerializers, JobpsotingSerializer, JobsGetS
 from mainuser.models import Userprofile
 from rest_framework.pagination import PageNumberPagination,CursorPagination
 from .mixins import ListModelMixin
+from django_filters import rest_framework as filters
+
+
+
+class JobFilter(filters.FilterSet):
+    # min_price = filters.NumberFilter(field_name="price", lookup_expr='gte')
+    # max_price = filters.NumberFilter(field_name="price", lookup_expr='lte')
+
+    class Meta:
+        model = JobsPosting
+        fields = ['category','user']
 
 class GetCategory(viewsets.ModelViewSet):
 
@@ -31,14 +42,22 @@ class JobPosting(viewsets.ModelViewSet):
 
     serializer_class = JobpsotingSerializer
     permission_classes = [IsAuthenticatedOrReadOnly,]
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = JobFilter
 
-    def list(self, request):
+    
+    
+    # def list(self, request):
         
-        queryset = JobsPosting.objects.all()
-        page = self.paginate_queryset(queryset)
+    #     queryset = JobsPosting.objects.all()
+    #     page = self.paginate_queryset(queryset)
         
-        serializer = JobsGetSerializer(page,many = True)
-        return self.get_paginated_response(serializer.data)
+    #     serializer = JobpsotingSerializer(page,many = True)
+
+        
+        
+        
+    #     return self.get_paginated_response(serializer.data)
         
     def retrieve(self, request, pk=None):
         queryset = JobsPosting.objects.all()

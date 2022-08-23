@@ -26,12 +26,13 @@ SECRET_KEY = 'django-insecure-5f%@(3(ce)tos&f)9jn=os%pp5i&fqrz1sz$pmmhbzb*ynpeg-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,16 +41,19 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'django_filters',
 
     
 
     'oauth2_provider',
     'social_django',
     'drf_social_oauth2',
+    
 
     'mainuser',
     'jobs',
     'blogs1',
+    'chat',
 ]
 
 MIDDLEWARE = [
@@ -69,7 +73,7 @@ ROOT_URLCONF = 'jobboard.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -84,6 +88,7 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = 'jobboard.asgi.application'
 WSGI_APPLICATION = 'jobboard.wsgi.application'
 
 
@@ -213,3 +218,9 @@ CORS_ALLOWED_ORIGINS = [
 
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 MEDIA_URL = '/media/'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}

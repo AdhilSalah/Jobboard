@@ -2,6 +2,7 @@ from unittest import result
 from urllib import response
 from django.http import HttpResponse
 from rest_framework.generics import CreateAPIView
+from jobs import serializers
 from jobs.models import JobsPosting
 from jobs.serializers import JobsGetSerializer
 
@@ -123,6 +124,7 @@ client secret = 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
 class CreateProfile(APIView):
 
     permission_classes=[IsAuthenticated,]
+    serializer_classes = UserProfileCreateSerializer
 
     parser_classes = [MultiPartParser,FormParser]
     
@@ -130,7 +132,7 @@ class CreateProfile(APIView):
         print(request.data)
         serializer = UserProfileCreateSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(user=self.request.user)
 
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         else:
@@ -143,6 +145,7 @@ class CreateProfile(APIView):
 class CreateEducation(APIView):
 
     permission_classes=[IsAuthenticated,]
+    serializer_classes = EducationSerializer
 
 
     
@@ -150,7 +153,9 @@ class CreateEducation(APIView):
         print(request.data)
         serializer = EducationSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(user=self.request.user)
+
+            
 
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         else:
@@ -170,7 +175,7 @@ class CreateExperience(APIView):
         print(request.data)
         serializer = ExperienceSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(user=self.request.user)
 
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         else:

@@ -14,7 +14,7 @@ class CategorySerializers(serializers.ModelSerializer):
     class Meta:
 
         model= Category
-        fields = '__all__'
+        fields = ['category_name']
 
 class Jobuserprofile(serializers.ModelSerializer):
 
@@ -32,7 +32,7 @@ class JobpsotingSerializer(serializers.ModelSerializer):
     class Meta:
 
         model = JobsPosting
-        fields = ['category','job_title','job_description']     
+        fields = ['id','category','job_title','job_description']     
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)

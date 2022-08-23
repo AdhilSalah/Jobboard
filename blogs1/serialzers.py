@@ -17,7 +17,7 @@ class BlogPostSerializers(serializers.ModelSerializer):
 class BlogsGetSerializers(serializers.ModelSerializer):
     profile = serializers.SerializerMethodField()
 
-    count = serializers.SerializerMethodField()
+    
 
     class Meta:
 
@@ -80,7 +80,7 @@ class CommentPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlogComment
 
-        fields = ['comment','blog']
+        fields = ['id','comment','blog']
 
 class LikePostSerializer(serializers.ModelSerializer):
     class Meta:
