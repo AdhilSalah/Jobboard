@@ -2,7 +2,7 @@ from pyexpat import model
 from random import choices
 from urllib import response
 from rest_framework import serializers
-from .models import Blog, BlogComment, BlogReaction
+from .models import Blog, BlogComment, BlogReaction, CommentReply
 from jobs.serializers import JobsGetSerializer
 
 '''serializer for posting blog'''
@@ -36,19 +36,34 @@ class BlogsGetSerializers(serializers.ModelSerializer):
         return response
     
 
-        
+    '''serializer for repying to a comment'''   
+class ReplyGetSerializer(serializers.ModelSerializer):
 
+    user = serializers.SerializerMethodField()
+
+    class Meta:
+
+        model = CommentReply
+        fields = ['id','user','reply','updated_at']  
+
+    def get_user(self,obj):
+        response = obj.user.email
+        return response     
 
 '''serializer for getting comment of blog'''
 class CommentGetSerializer(serializers.ModelSerializer):
 
     user = serializers.SerializerMethodField()
+
+    reply = ReplyGetSerializer(source = 'reply_to_comment',many = True,read_only = True)
     class Meta:
         model = BlogComment
-        fields = ['user','comment','updated_at'] 
+        fields = ['id','user','comment','updated_at','reply'] 
     def get_user(self,obj):
         response = obj.user.email
         return response 
+
+    
 
 '''serializr for getiing full blog details'''
 class BlogsGetDetailsSerializers(serializers.ModelSerializer):
@@ -87,6 +102,12 @@ class LikePostSerializer(serializers.ModelSerializer):
 
         model = BlogReaction
         fields = ['id','type','blog'] 
+
+class   ReplyPostSerializer(serializers.ModelSerializer):
+
+    class Meta :
+        model = CommentReply
+        fields = ['id','comment','reply']      
 
 
 

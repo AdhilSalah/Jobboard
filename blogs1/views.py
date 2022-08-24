@@ -5,8 +5,8 @@ from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from .serialzers import BlogPostSerializers, BlogsGetDetailsSerializers, BlogsGetSerializers, CommentPostSerializer, LikePostSerializer, Likecounter
-from .models import Blog, BlogComment, BlogReaction
+from .serialzers import BlogPostSerializers, BlogsGetDetailsSerializers, BlogsGetSerializers, CommentPostSerializer, LikePostSerializer, Likecounter, ReplyPostSerializer
+from .models import Blog, BlogComment, BlogReaction, CommentReply
 
 from mainuser.models import Userprofile
 from jobs.serializers import JobsGetSerializer
@@ -96,7 +96,19 @@ class PostLikeView(viewsets.ModelViewSet):
         x.count(instance)
 
         
-        return super().perform_destroy(instance)    
+        return super().perform_destroy(instance)   
+
+
+class ReplyToCommentView(viewsets.ModelViewSet):
+
+    permission_classes = [AllowAny,]
+    serializer_class =   ReplyPostSerializer
+    queryset = CommentReply.objects.all()
+    def perform_create(self, serializer):
+        
+        serializer.save(user=self.request.user)
+
+
 
             
 

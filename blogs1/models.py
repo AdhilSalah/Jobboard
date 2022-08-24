@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 from ast import mod
-from turtle import title
+from turtle import title, update
 from django.db import models
 from mainuser.models import NewUser, Userprofile
 from django.utils.translation import ngettext_lazy
@@ -67,4 +67,12 @@ class BlogComment(models.Model):
     def __str__(self):
 
         return self.blog.title
+
+
+class CommentReply(models.Model):
+
+    user = models.ForeignKey(NewUser,on_delete=models.CASCADE)
+    comment = models.ForeignKey(BlogComment,on_delete=models.CASCADE,related_name='reply_to_comment')
+    reply = models.TextField(validators=[MinLengthValidator(3)]) 
+    updated_at = models.DateTimeField(auto_now=True)        
     
