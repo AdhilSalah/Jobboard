@@ -32,6 +32,7 @@ class Blog(models.Model):
     user = models.ForeignKey(NewUser,on_delete=models.CASCADE)
     profile = models.ForeignKey(Userprofile,on_delete=models.CASCADE)
     title = models.CharField(max_length=225)
+    slug = models.SlugField(unique=True)
     content = models.TextField()
     like = models.PositiveBigIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)

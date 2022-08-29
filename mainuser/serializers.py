@@ -10,7 +10,7 @@ from .models import Education, Experience, NewUser, Userprofile
 class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model=NewUser
-        fields=('email','username','password','first_name')
+        fields=('email','username','password')
         extra_kwargs={'password':{'write_only':True}}
     def create(self,validated_data):
         password=validated_data.pop('password',None)
@@ -38,11 +38,9 @@ class EducationSerializer(serializers.ModelSerializer):
         model = Education
 
         fields =('university','department','remark','start_date','end_date')
+        
 
-        def create(self,validated_data):
-            user_edu = Education.objects.create(**validated_data)
-
-            return user_edu
+        
 class ExperienceSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -67,29 +65,9 @@ class UserProfileCreateSerializer(serializers.ModelSerializer):
     class Meta:
 
         model = Userprofile
-        fields = ('last_name','date_of_birth','profile_photo','cv','about')   
+        fields = ('id','first_name','last_name','date_of_birth','profile_photo','cv','about')   
 
-        def create(self,validated_data):
-
-            
-            
-
-            # education_data = validated_data.pop('education')
-            # experience_data = validated_data.pop('experience')
-            user_profile = Userprofile.objects.create(**validated_data)
-            # Education.objects.create(
-
-            #     university = education_data[ 'university'],
-            #     department = education_data['department'],
-            #     remark = ['remark'],
-            #     start_date = ['start_date'],
-            #     end_date = ['end_date'],
-
-            # )
-            # Experience.objects.create(**experience_data)
-
-
-            return user_profile
+        
 
 
 
@@ -128,4 +106,4 @@ class UserGetSerializer(serializers.ModelSerializer):
 
         model = NewUser
 
-        fields = ['email','username','first_name','userpro','experience','education']
+        fields = ['email','username','userpro','experience','education']

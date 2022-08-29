@@ -1,22 +1,22 @@
-from unittest import result
-from urllib import response
-from django.http import HttpResponse
-from rest_framework.generics import CreateAPIView
-from jobs import serializers
-from jobs.models import JobsPosting
-from jobs.serializers import JobsGetSerializer
 
+from rest_framework.generics import CreateAPIView
+from .permissions import IsOwnerOrReadOnly
 from mainuser.models import Education
-from .serializers import  EducationGetSerializer, EducationSerializer, ExperienceSerializer, SignInSerializer, UserCreateSerializer, UserGetSerializer, UserProfileCreateSerializer
+from .serializers import  EducationGetSerializer, EducationSerializer, ExpeienceGetSerializer, ExperienceSerializer, SignInSerializer, UserCreateSerializer, UserGetSerializer, UserProfileCreateSerializer
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
+from rest_framework import viewsets,mixins
 from django.http import JsonResponse
 from django.contrib.auth import authenticate
 from rest_framework.parsers import MultiPartParser,FormParser
+from .models import Experience, Userprofile
+from rest_framework.parsers import JSONParser
+from django.shortcuts import get_object_or_404,get_list_or_404
+
+
 
 
 from oauth2_provider.models import RefreshToken
@@ -31,18 +31,28 @@ class UserRegistrationView(CreateAPIView):
 
 
     def post(self, request):
+        status_code = None
         serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        status_code = status.HTTP_201_CREATED
 
-        response = {
+        
+        if serializer.is_valid():
+            serializer.save()
+            status_code = status.HTTP_201_CREATED
+
+            response = {
                     'success' : 'True',
                     'status code' : status_code,
                     'message': 'User registered  successfully',
                     }
                 
-        return Response(response, status=status_code)
+            return Response(response, status=status_code)
+
+        else:
+
+            return Response(serializer.errors,status.HTTP_409_CONFLICT
+            )
+
+        
 
 
 class signin(APIView):
@@ -90,8 +100,6 @@ for refresh token  on path auth/token
 "client_secret":"Ehes1gWXMKLO4gFUrQtYWSHsz8iXpBTLk86568r7RVpvybln2m9gyoNzt9aM5ew2SKC0mcZ0FyyxZ75UT0FwdYD84Q0xQ0ditJOjV97y9IpKagrCfbtLyw8eeWuQxbrh",
 "grant_type":"refresh_token",
 "refresh_token":"token",
-
-
 '''     
 
 class CurrentUser(APIView):
@@ -121,66 +129,104 @@ client secret = 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
 '''
 
 #add user profile
-class CreateProfile(APIView):
+# class CreateProfile(APIView):
 
-    permission_classes=[IsAuthenticated,]
-    serializer_classes = UserProfileCreateSerializer
+#     permission_classes=[IsAuthenticated,]
+#     serializer_classes = UserProfileCreateSerializer
 
-    parser_classes = [MultiPartParser,FormParser]
+#     parser_classes = [MultiPartParser,FormParser]
     
-    def post(self,request):
-        print(request.data)
-        serializer = UserProfileCreateSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=self.request.user)
+#     def post(self,request):
+#         print(request.data)
+#         serializer = UserProfileCreateSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save(user=self.request.user)
 
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
-        else:
+#             return Response(serializer.data,status=status.HTTP_201_CREATED)
+#         else:
 
-            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+#             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+
+'''smaple viewsets'''
+
+
+class UserprofileCreate(mixins.CreateModelMixin,
+                        mixins.RetrieveModelMixin,
+                        mixins.UpdateModelMixin,
+                        mixins.DestroyModelMixin,
+                        viewsets.GenericViewSet):
+                    
+
+    permission_classes = [IsAuthenticated,IsOwnerOrReadOnly]
+    serializer_class = UserProfileCreateSerializer
+    parser_classes = [MultiPartParser,FormParser]
+    queryset = Userprofile.objects.all()
+
+
+    
+
+    def perform_create(self, serializer):
+
+                serializer.save(user=self.request.user)
+                
+                
+
+
+
+
+
 
 
 #add user education            
 
-class CreateEducation(APIView):
+class CreateEducation(viewsets.ModelViewSet):
 
     permission_classes=[IsAuthenticated,]
-    serializer_classes = EducationSerializer
+    serializer_class = EducationSerializer
+    queryset = Education.objects.all()
+
+    def list(self, request):
+
+        queryset = Education.objects.all()
+        blog = get_list_or_404(queryset, user=self.request.user)
+        serializer = EducationGetSerializer(blog,many = True) 
+        return Response(serializer.data) 
 
 
     
-    def post(self,request):
-        print(request.data)
-        serializer = EducationSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=self.request.user)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
-            
-
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
-        else:
-
-            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-
+        return serializer.data
 #add user experience            
 
 
-class CreateExperience(APIView):
+class CreateExperience(viewsets.ModelViewSet):
 
-    permission_classes=[IsAuthenticated,]
+    permission_classes=[IsAuthenticated,IsOwnerOrReadOnly]
+    serializer_class = ExperienceSerializer
+    queryset = Experience.objects.all()
 
     
     
-    def post(self,request):
-        print(request.data)
-        serializer = ExperienceSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=self.request.user)
+    def list(self, request):
 
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
-        else:
+        queryset = Experience.objects.all()
+        exp = get_list_or_404(queryset, user=self.request.user)
+        serializer = ExpeienceGetSerializer(exp,many = True) 
+        
+        return Response(serializer.data) 
 
-            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)  
+
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+        return serializer.data
+
+
+        
 
                             
 

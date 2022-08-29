@@ -40,7 +40,7 @@ class NewUser(AbstractBaseUser, PermissionsMixin):
 
     email = models.EmailField(_('email address'), unique=True)
     username = models.CharField(max_length=150, unique=True)
-    first_name = models.CharField(max_length=150, blank=True)
+    
     start_date = models.DateTimeField(default=timezone.now)
     about = models.TextField(_(
         'about'), max_length=500, blank=True)
@@ -59,6 +59,7 @@ class NewUser(AbstractBaseUser, PermissionsMixin):
 class Userprofile(models.Model):
 
     user = models.OneToOneField(NewUser,on_delete=models.CASCADE,related_name='pro_user_set')
+    first_name = models.CharField(max_length=225,null=True)
     last_name = models.CharField(max_length=225,blank=True)
     date_of_birth = models.DateField()
     profile_photo = models.ImageField(upload_to='media/images/user') 
@@ -68,7 +69,7 @@ class Userprofile(models.Model):
 
     def __str__(self) :
 
-        return self.user.first_name
+        return self.user.email
 
 class Education(models.Model):
 

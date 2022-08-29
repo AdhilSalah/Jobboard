@@ -210,10 +210,8 @@ AUTHENTICATION_BACKENDS = (
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = "369309222265-m5q6ib5ruoj873hli2hl9fq170u2m678.apps.googleusercontent.com"
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = "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"
 
-CORS_ALLOWED_ORIGINS = [
-   "http://localhost:3000",
-   "http://127.0.0.1:3000"
-]
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = False
 
 
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
@@ -224,3 +222,6 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels.layers.InMemoryChannelLayer"
     }
 }
+
+
+SENDSMS_BACKEND = 'myapp.mysmsbackend.SmsBackend'

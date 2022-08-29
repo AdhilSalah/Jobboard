@@ -2,7 +2,7 @@ from functools import partial
 from urllib import response
 from django.shortcuts import render
 from rest_framework import viewsets
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework.response import Response
 
 from .serialzers import BlogPostSerializers, BlogsGetDetailsSerializers, BlogsGetSerializers, CommentPostSerializer, LikePostSerializer, Likecounter, ReplyPostSerializer
@@ -12,15 +12,18 @@ from mainuser.models import Userprofile
 from jobs.serializers import JobsGetSerializer
 from django.shortcuts import get_object_or_404
 import copy
+from mainuser.permissions import IsOwnerOrReadOnly
+from slugify import slugify
 
 
 
 '''operations on a blog'''
 class BlogView(viewsets.ModelViewSet):
 
-    permission_classes = [AllowAny,]
+    permission_classes = [IsOwnerOrReadOnly,IsAuthenticated]
     serializer_class = BlogPostSerializers
     queryset = Blog.objects.all()
+    lookup_field = 'slug'
 
     
 
@@ -31,12 +34,16 @@ class BlogView(viewsets.ModelViewSet):
         return self.get_paginated_response(serializer.data)
 
     def perform_create(self, serializer):
-        profile = Userprofile.objects.get(user=self.request.user)
-        serializer.save(user = self.request.user,profile = profile)
 
-    def retrieve(self, request, pk=None):
+        get_title = copy.deepcopy(serializer.validated_data)
+        title = get_title.pop('title')
+        slug = slugify(title)
+        profile = Userprofile.objects.get(user=self.request.user)
+        serializer.save(user = self.request.user,slug = slug,profile = profile)
+
+    def retrieve(self, request, slug=None):
         queryset = Blog.objects.all()
-        blog = get_object_or_404(queryset, pk=pk)
+        blog = get_object_or_404(queryset, slug=slug)
         serializer = BlogsGetDetailsSerializers(blog) 
         return Response(serializer.data) 
 
