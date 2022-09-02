@@ -1,9 +1,11 @@
 
+from unittest import result
+from urllib import request, response
 from rest_framework.generics import CreateAPIView
-from .permissions import IsOwnerOrReadOnly
+from .permissions import IsOwnerOrReadOnly,IsOwnerAcount
 from mainuser.models import Education
 from .serializers import  EducationGetSerializer, EducationSerializer, ExpeienceGetSerializer, ExperienceSerializer, SignInSerializer, UserCreateSerializer, UserGetSerializer, UserProfileCreateSerializer
-from rest_framework.permissions import AllowAny,IsAuthenticated
+from rest_framework.permissions import AllowAny,IsAuthenticated,IsAdminUser
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -12,45 +14,112 @@ from rest_framework import viewsets,mixins
 from django.http import JsonResponse
 from django.contrib.auth import authenticate
 from rest_framework.parsers import MultiPartParser,FormParser
-from .models import Experience, Userprofile
+from .models import Experience, NewUser, Userprofile
 from rest_framework.parsers import JSONParser
 from django.shortcuts import get_object_or_404,get_list_or_404
+from rest_framework.views import exception_handler
+
+from django.conf import settings
+from django.core.mail import send_mail
 
 
 
 
-from oauth2_provider.models import RefreshToken
 
 
 
 
-
-class UserRegistrationView(CreateAPIView):
-    serializer_class = UserCreateSerializer
-    permission_classes = (AllowAny,)
-
-
-    def post(self, request):
-        status_code = None
-        serializer = self.serializer_class(data=request.data)
 
         
+        
+
+from rest_framework.views import exception_handler
+
+
+def custom_exception_handler(exc, context):
+    # Call REST framework's default exception handler first,
+    # to get the standard error response.
+    response = exception_handler(exc, context)
+
+    # Update the structure of the response data.
+    if response is not None:
+        customized_response = {}
+        customized_response['errors'] = {}
+
+        for key, value in response.data.items():
+            print(key)
+            error = {'field': key, 'message': 'error'}
+            customized_response['errors'].add(error)
+
+        response.data = customized_response
+
+    return response
+
+
+
+
+
+class UserRegistrationView(viewsets.ModelViewSet):
+    serializer_class = UserCreateSerializer
+    permission_classes = (IsOwnerAcount,)
+    queryset = NewUser.objects.all()
+
+    def create(self, request):
+        serializer = self.get_serializer(data=request.data)
+
+        
+        
+        
         if serializer.is_valid():
+            temp = serializer.validated_data
+        
             serializer.save()
-            status_code = status.HTTP_201_CREATED
 
-            response = {
-                    'success' : 'True',
-                    'status code' : status_code,
-                    'message': 'User registered  successfully',
-                    }
-                
-            return Response(response, status=status_code)
+            email = temp.pop('email')
+            
+            try:
+                subject = 'welcome to GFG world'
+                message = f'Hi , thank you for registering in geeksforgeeks.'
+                email_from = settings.EMAIL_HOST_USER
+                recipient_list = [email, ]
+                send_mail( subject, message, email_from, recipient_list )
+            except:
+                response = {
+                    'message':'email address dot exist'
+                }
+                return Response(response)    
 
+            return Response(serializer.data,status.HTTP_201_CREATED)
         else:
 
-            return Response(serializer.errors,status.HTTP_409_CONFLICT
-            )
+            
+        
+            
+            return Response(serializer.errors)    
+
+            
+
+        
+        
+
+    def list(self, request, *args, **kwargs):
+        self.permission_classes = (IsAdminUser,)
+        return super().list(request, *args, **kwargs)
+
+
+
+        
+
+                
+
+
+
+    
+
+        
+
+
+
 
         
 
@@ -81,7 +150,7 @@ class signin(APIView):
                     'message': 'invalid username or password',
                 }, status=403)
         else:
-            return Response({'message':serializer.errors}, status=400)      
+            return Response({'message':serializer.errors},status=400)      
 
 
 '''for  auth you must provide
@@ -228,7 +297,23 @@ class CreateExperience(viewsets.ModelViewSet):
 
         
 
-                            
+
+
+
+
+
+
+from django.http import JsonResponse
+from django.views import View
+
+
+class RedirectSocial(View):
+
+    def get(self, request, *args, **kwargs):
+        code, state = str(request.GET['code']), str(request.GET['state'])
+        json_obj = {'code': code, 'state': state}
+        print(json_obj)
+        return JsonResponse(json_obj)
 
 
 

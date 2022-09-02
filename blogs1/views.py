@@ -30,6 +30,7 @@ class BlogView(viewsets.ModelViewSet):
     def list(self,request):
         queryset = Blog.objects.all()
         page = self.paginate_queryset(queryset)
+        self.permission_classes = [AllowAny,]
         serializer = BlogsGetSerializers(page,many = True)
         return self.get_paginated_response(serializer.data)
 
@@ -52,7 +53,7 @@ class BlogView(viewsets.ModelViewSet):
 class PostCommentView(viewsets.ModelViewSet):
 
     serializer_class = CommentPostSerializer
-    permission_classes = [AllowAny,]
+    permission_classes = [IsAuthenticated,]
 
     queryset = BlogComment.objects.all()
     def perform_create(self, serializer):
@@ -63,7 +64,7 @@ class PostCommentView(viewsets.ModelViewSet):
 
 class PostLikeView(viewsets.ModelViewSet):
 
-    permission_classes = [AllowAny,]
+    permission_classes = [IsAuthenticated,]
     serializer_class = LikePostSerializer
     queryset = BlogReaction.objects.all()
     
@@ -108,7 +109,7 @@ class PostLikeView(viewsets.ModelViewSet):
 
 class ReplyToCommentView(viewsets.ModelViewSet):
 
-    permission_classes = [AllowAny,]
+    permission_classes = [IsAuthenticated,]
     serializer_class =   ReplyPostSerializer
     queryset = CommentReply.objects.all()
     def perform_create(self, serializer):
