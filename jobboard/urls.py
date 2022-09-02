@@ -17,13 +17,22 @@ from django.contrib import admin
 from django.urls import include, path
 from django.conf.urls.static import static
 from django.conf import settings
+
+from jobboard.views import RedirectSocial
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('auth/',include('mainuser.urls')),
+    
+    # path('auth/',include('rest_framework.urls')),
+    # path('auth/', include('drf_social_oauth2.urls', namespace='drf')),
+    path("auth1/", include("mainuser.urls")), 
     path('auth/',include('rest_framework.urls')),
-    path('auth/', include('drf_social_oauth2.urls', namespace='drf')),
+    path("auth/", include("djoser.urls")),
+    path("auth/", include("djoser.urls.jwt")),
+    path('auth/', include('djoser.social.urls')),
+    
+
     path('jobs/',include('jobs.urls')),
     path('blog/',include('blogs1.urls')),
     path('chat/',include('chat.urls')),
 ]
-urlpatterns += static (settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
