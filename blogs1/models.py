@@ -1,8 +1,7 @@
 from django.db import models
 
 # Create your models here.
-from ast import mod
-from turtle import title, update
+
 from django.db import models
 from mainuser.models import NewUser, Userprofile
 from django.utils.translation import ngettext_lazy

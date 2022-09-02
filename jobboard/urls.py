@@ -44,7 +44,7 @@ urlpatterns = [
     path('jobs/',include('jobs.urls')),
     path('blog/',include('blogs1.urls')),
     path('chat/',include('chat.urls')),
-    path('docs/', include_docs_urls(title='BlogAPI')),
+    path('', include_docs_urls(title='BlogAPI')),
     path('schema', get_schema_view(
         title="BlogAPI",
         description="API for the BlogAPI",
