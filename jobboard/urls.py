@@ -40,6 +40,7 @@ urlpatterns = [
     path("auth/", include("djoser.urls.jwt")),
     path('auth/', include('djoser.social.urls')),
     
+    
 
     path('jobs/',include('jobs.urls')),
     path('blog/',include('blogs1.urls')),

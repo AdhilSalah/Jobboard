@@ -14,6 +14,7 @@ from django.shortcuts import get_object_or_404
 import copy
 from mainuser.permissions import IsOwnerOrReadOnly
 from slugify import slugify
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 
@@ -21,6 +22,7 @@ from slugify import slugify
 class BlogView(viewsets.ModelViewSet):
 
     permission_classes = [IsOwnerOrReadOnly,IsAuthenticated]
+    authentication_classes = [JWTAuthentication,]
     serializer_class = BlogPostSerializers
     queryset = Blog.objects.all()
     lookup_field = 'slug'
@@ -53,7 +55,8 @@ class BlogView(viewsets.ModelViewSet):
 class PostCommentView(viewsets.ModelViewSet):
 
     serializer_class = CommentPostSerializer
-    permission_classes = [IsAuthenticated,]
+    permission_classes = [IsAuthenticated,IsOwnerOrReadOnly]
+    authentication_classes = [JWTAuthentication,]
 
     queryset = BlogComment.objects.all()
     def perform_create(self, serializer):
@@ -64,7 +67,8 @@ class PostCommentView(viewsets.ModelViewSet):
 
 class PostLikeView(viewsets.ModelViewSet):
 
-    permission_classes = [IsAuthenticated,]
+    permission_classes = [IsAuthenticated,IsOwnerOrReadOnly]
+    authentication_classes = [JWTAuthentication,]
     serializer_class = LikePostSerializer
     queryset = BlogReaction.objects.all()
     
@@ -109,7 +113,8 @@ class PostLikeView(viewsets.ModelViewSet):
 
 class ReplyToCommentView(viewsets.ModelViewSet):
 
-    permission_classes = [IsAuthenticated,]
+    permission_classes = [IsAuthenticated,IsOwnerOrReadOnly]
+    authentication_classes = [JWTAuthentication,]
     serializer_class =   ReplyPostSerializer
     queryset = CommentReply.objects.all()
     def perform_create(self, serializer):

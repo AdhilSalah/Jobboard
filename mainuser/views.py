@@ -1,4 +1,5 @@
 
+from multiprocessing import context
 from unittest import result
 from urllib import request, response
 from rest_framework.generics import CreateAPIView
@@ -18,6 +19,7 @@ from .models import Experience, NewUser, Userprofile
 from rest_framework.parsers import JSONParser
 from django.shortcuts import get_object_or_404,get_list_or_404
 from rest_framework.views import exception_handler
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -173,6 +175,7 @@ for refresh token  on path auth/token
 
 class CurrentUser(APIView):
     permission_classes = (IsAuthenticated,)
+    authentication_classes = (JWTAuthentication)
     def get(self, request):
             serializer = UserGetSerializer(self.request.user)
             status_code = status.HTTP_200_OK
@@ -230,6 +233,7 @@ class UserprofileCreate(mixins.CreateModelMixin,
     permission_classes = [IsAuthenticated,IsOwnerOrReadOnly]
     serializer_class = UserProfileCreateSerializer
     parser_classes = [MultiPartParser,FormParser]
+    authentication_classes = [JWTAuthentication]
     queryset = Userprofile.objects.all()
 
 
@@ -252,6 +256,7 @@ class UserprofileCreate(mixins.CreateModelMixin,
 class CreateEducation(viewsets.ModelViewSet):
 
     permission_classes=[IsAuthenticated,]
+    authentication_classes = (JWTAuthentication)
     serializer_class = EducationSerializer
     queryset = Education.objects.all()
 
@@ -274,6 +279,7 @@ class CreateEducation(viewsets.ModelViewSet):
 class CreateExperience(viewsets.ModelViewSet):
 
     permission_classes=[IsAuthenticated,IsOwnerOrReadOnly]
+    authentication_classes = (JWTAuthentication)
     serializer_class = ExperienceSerializer
     queryset = Experience.objects.all()
 
@@ -295,25 +301,44 @@ class CreateExperience(viewsets.ModelViewSet):
         return serializer.data
 
 
+from rest_framework import permissions
+from rest_framework.decorators import (
+    api_view,
+    permission_classes,
+)
+from rest_framework.response import Response
+from rest_framework.views import APIView
+import requests
+
+
+
+@api_view(["GET"])
+@permission_classes([permissions.AllowAny])  
+def request_user_activation(request,uid, token):
+        """ 
+        Intermediate view to activate a user's email. 
+        """
         
+        post_url = "http://127.0.0.1:8000/auth/users/activation/"
+        post_data = {"uid": uid, "token": token}
+        
+        result = requests.post(post_url, data=post_data)
+        content = result.text
+        return render(request,'success.html')
 
 
 
+from django.shortcuts import redirect, render
 
 
+def AccountActivate(request,uid,token):
 
-
-from django.http import JsonResponse
-from django.views import View
-
-
-class RedirectSocial(View):
-
-    def get(self, request, *args, **kwargs):
-        code, state = str(request.GET['code']), str(request.GET['state'])
-        json_obj = {'code': code, 'state': state}
-        print(json_obj)
-        return JsonResponse(json_obj)
-
+    uid = uid
+    token = token
+    context = {
+        'token':token,
+        'uid':uid
+    }
+    return render(request,'Activate.html',context)
 
 

@@ -5,7 +5,7 @@ from rest_framework import routers
 from django.urls import re_path as url
 
 from mainuser.models import Userprofile
-from .views import CreateEducation, CreateExperience,CurrentUser, RedirectSocial, UserRegistrationView, UserprofileCreate, signin
+from .views import CreateEducation, CreateExperience,CurrentUser, UserRegistrationView, UserprofileCreate, request_user_activation, signin
 from rest_framework_simplejwt.views import (
     
     TokenRefreshView,
@@ -23,7 +23,10 @@ urlpatterns = [
     url(r'^refresh',TokenRefreshView.as_view(),name='token_refresh'),
     path('currentuser/', CurrentUser.as_view(), name="current"),
     
-    path('get_profile/', RedirectSocial.as_view()),
+    
+
+    path('request_activate/<str:uid>/<str:token>',views.AccountActivate,name='activation'),
+    path ('Useractivation/<str:uid>/<str:token>',views.request_user_activation,name='Useractivation'),
     
     # path('profile/createprofile/',CreateProfile.as_view(),name='createprofile'),
     # path('profile/createeducation/',CreateEducation.as_view(),name='education'),
