@@ -195,8 +195,8 @@ REST_FRAMEWORK = {
 }
 white_list = ['http://localhost:8000/auth1/get_profile']
 DJOSER = {
-    'PASSWORD_RESET_CONFIRM_URL': 'auth1/password/reset/{uid}/{token}',
-    # 'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
+    'PASSWORD_RESET_CONFIRM_URL': 'auth1/password/reset/confirm/{uid}/{token}',
+    'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
     "ACTIVATION_URL": "auth1/request_activate/{uid}/{token}",
     'SEND_ACTIVATION_EMAIL': True,
     'SOCIAL_AUTH_TOKEN_STRATEGY': 'djoser.social.token.jwt.TokenStrategy',

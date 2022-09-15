@@ -319,7 +319,7 @@ def request_user_activation(request,uid, token):
         Intermediate view to activate a user's email. 
         """
         
-        post_url = "http://127.0.0.1:8000/auth/users/activation/"
+        post_url = "http://65.2.3.224/auth/users/activation/"
         post_data = {"uid": uid, "token": token}
         
         result = requests.post(post_url, data=post_data)
