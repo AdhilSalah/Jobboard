@@ -1,5 +1,5 @@
 from functools import partial
-from urllib import response
+from urllib import request, response
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny,IsAuthenticated
@@ -21,34 +21,33 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 '''operations on a blog'''
 class BlogView(viewsets.ModelViewSet):
 
-    permission_classes = [IsOwnerOrReadOnly,IsAuthenticated]
-    authentication_classes = [JWTAuthentication,]
+    permission_classes = [AllowAny,IsOwnerOrReadOnly]
+    authentication_classes = [JWTAuthentication]
     serializer_class = BlogPostSerializers
     queryset = Blog.objects.all()
-    lookup_field = 'slug'
 
     
 
-    def list(self,request):
-        queryset = Blog.objects.all()
-        page = self.paginate_queryset(queryset)
-        self.permission_classes = [AllowAny,]
-        serializer = BlogsGetSerializers(page,many = True)
-        return self.get_paginated_response(serializer.data)
+    # def list(self,request):
+    #     queryset = Blog.objects.all()
+        
+    #     serializer = BlogsGetSerializers(queryset)
+
+    #     return Response(serializer.data)
+        
 
     def perform_create(self, serializer):
 
-        get_title = copy.deepcopy(serializer.validated_data)
-        title = get_title.pop('title')
-        slug = slugify(title)
-        profile = Userprofile.objects.get(user=self.request.user)
-        serializer.save(user = self.request.user,slug = slug,profile = profile)
 
-    def retrieve(self, request, slug=None):
+        profile = Userprofile.objects.get(user=self.request.user)
+        print(self.request.user)
+        serializer.save(user = self.request.user,profile = profile)
+
+    def retrieve(self, request, pk=None):
         queryset = Blog.objects.all()
-        blog = get_object_or_404(queryset, slug=slug)
+        blog = get_object_or_404(queryset, pk=pk)
         serializer = BlogsGetDetailsSerializers(blog) 
-        return Response(serializer.data) 
+        return Response(serializer.data)  
 
 
 '''Commenting on  a post'''
@@ -76,7 +75,7 @@ class PostLikeView(viewsets.ModelViewSet):
         like = copy.deepcopy(serializer.validated_data)
         blog= like.pop('blog')
 
-        print('hi1')
+        
         
         if BlogReaction.objects.filter(blog=blog,user=self.request.user).exists():
 

@@ -13,8 +13,11 @@ from rest_framework import viewsets,mixins
 from jobs.serializers import CategorySerializers, JobpsotingSerializer, JobsGetSerializer
 from mainuser.models import Userprofile
 from rest_framework.pagination import PageNumberPagination,CursorPagination
+
+from mainuser.permissions import IsOwnerOrReadOnly
 from .mixins import ListModelMixin
 from django_filters import rest_framework as filters
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 
@@ -32,6 +35,7 @@ class GetCategory(viewsets.ModelViewSet):
 
     serializer_class = CategorySerializers
     permission_classes = [AllowAny,]
+    authentication_classes = [JWTAuthentication]
 
 
 
@@ -41,7 +45,8 @@ class JobPosting(viewsets.ModelViewSet):
     
 
     serializer_class = JobpsotingSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly,]
+    permission_classes = [IsAuthenticatedOrReadOnly,IsOwnerOrReadOnly]
+    authentication_classes = [JWTAuthentication]
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = JobFilter
 

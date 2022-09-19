@@ -11,11 +11,7 @@ class BlogPostSerializers(serializers.ModelSerializer):
     class Meta:
 
         model = Blog
-        fields = ['title', 'content']
-        lookup_field = 'slug'
-        extra_kwargs = {
-            'url': {'lookup_field': 'slug'}
-        }
+        fields = ['id','title', 'content']
 
 '''serialier for getting blog'''
 class BlogsGetSerializers(serializers.ModelSerializer):
@@ -27,9 +23,7 @@ class BlogsGetSerializers(serializers.ModelSerializer):
 
         model = Blog
 
-        fields = ['title', 'slug','profile']
-
-        
+        fields = ['id'',title', 'profile']
 
     def get_profile(self, obj):
         

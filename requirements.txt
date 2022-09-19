@@ -59,7 +59,6 @@ rsa==4.9
 s3transfer==0.6.0
 service-identity==21.1.0
 six==1.16.0
-
 social-auth-core==4.3.0
 sqlparse==0.4.2
 text-unidecode==1.3
