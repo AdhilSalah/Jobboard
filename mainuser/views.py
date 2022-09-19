@@ -20,7 +20,7 @@ from rest_framework.parsers import JSONParser
 from django.shortcuts import get_object_or_404,get_list_or_404
 from rest_framework.views import exception_handler
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
+from rest_framework.exceptions import ParseError
 from django.conf import settings
 from django.core.mail import send_mail
 
@@ -230,7 +230,7 @@ class UserprofileCreate(mixins.CreateModelMixin,
                         viewsets.GenericViewSet):
                     
 
-    permission_classes = [IsAuthenticated,IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated,IsOwnerOrReadOnly,IsAdminUser]
     serializer_class = UserProfileCreateSerializer
     parser_classes = [MultiPartParser,FormParser]
     authentication_classes = [JWTAuthentication]
@@ -240,8 +240,16 @@ class UserprofileCreate(mixins.CreateModelMixin,
     
 
     def perform_create(self, serializer):
+                try:
+                    serializer.save(user=self.request.user)
+                except Exception as e:
+                    
+                    response = {
+                        'status':status.HTTP_409_CONFLICT,
+                        'message':'user allready have a profile'
+                    }
 
-                serializer.save(user=self.request.user)
+                    raise ParseError(response)
                 
                 
 
@@ -251,7 +259,7 @@ class UserprofileCreate(mixins.CreateModelMixin,
 
 
 
-#add user education            
+            
 
 class CreateEducation(viewsets.ModelViewSet):
 
