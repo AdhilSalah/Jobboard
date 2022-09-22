@@ -174,8 +174,8 @@ for refresh token  on path auth/token
 '''     
 
 class CurrentUser(APIView):
-    permission_classes = (IsAuthenticated,)
-    authentication_classes = (JWTAuthentication)
+    permission_classes = [IsAuthenticated,IsOwnerOrReadOnly]
+    authentication_classes = [JWTAuthentication]
     def get(self, request):
             serializer = UserGetSerializer(self.request.user)
             status_code = status.HTTP_200_OK
@@ -264,7 +264,7 @@ class UserprofileCreate(mixins.CreateModelMixin,
 class CreateEducation(viewsets.ModelViewSet):
 
     permission_classes=[IsAuthenticated,]
-    authentication_classes = (JWTAuthentication)
+    authentication_classes = [JWTAuthentication]
     serializer_class = EducationSerializer
     queryset = Education.objects.all()
 
@@ -280,18 +280,16 @@ class CreateEducation(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-        return serializer.data
+        return Response(serializer.data)
 #add user experience            
 
 
 class CreateExperience(viewsets.ModelViewSet):
 
     permission_classes=[IsAuthenticated,IsOwnerOrReadOnly]
-    authentication_classes = (JWTAuthentication)
+    authentication_classes = [JWTAuthentication]
     serializer_class = ExperienceSerializer
     queryset = Experience.objects.all()
-
-    
     
     def list(self, request):
 
