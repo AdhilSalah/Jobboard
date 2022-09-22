@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -147,9 +148,9 @@ USE_TZ = True
 
 # STATIC_URL = 'static/'
 
-AWS_ACCESS_KEY_ID = 'AKIA2TSZADYAJ5O4DYA7'
-AWS_SECRET_ACCESS_KEY = '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'
-AWS_STORAGE_BUCKET_NAME = 'myjobbuck'
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl':'max-age=86400',
@@ -272,9 +273,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'adhilsalah06@gmail.com'
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 
-EMAIL_HOST_PASSWORD = 'fhpfolojvefrxnuj'
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 
 
