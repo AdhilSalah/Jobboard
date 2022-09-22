@@ -3,7 +3,7 @@
 
 Jobboard is a platform where users can hired and get hired,post blogs,rect to blogs,message to users.
 
-Link = http://65.2.3.224/
+Link =http://13.235.133.158
 
 
 
