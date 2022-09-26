@@ -6,7 +6,7 @@ from rest_framework.generics import CreateAPIView
 from .permissions import IsOwnerOrReadOnly,IsOwnerAcount
 from mainuser.models import Education
 from .serializers import  EducationGetSerializer, EducationSerializer, ExpeienceGetSerializer, ExperienceSerializer, SignInSerializer, UserCreateSerializer, UserGetSerializer, UserProfileCreateSerializer
-from rest_framework.permissions import AllowAny,IsAuthenticated
+from rest_framework.permissions import AllowAny,IsAuthenticated,IsAdminUser
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
