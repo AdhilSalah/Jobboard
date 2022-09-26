@@ -1,4 +1,5 @@
 from functools import partial
+from lib2to3.pgen2.parse import ParseError
 from urllib import request, response
 from django.shortcuts import render
 from rest_framework import viewsets
@@ -7,10 +8,10 @@ from rest_framework.response import Response
 
 from .serialzers import BlogPostSerializers, BlogsGetDetailsSerializers, BlogsGetSerializers, CommentPostSerializer, LikePostSerializer, Likecounter, ReplyPostSerializer
 from .models import Blog, BlogComment, BlogReaction, CommentReply
-
+from rest_framework.exceptions import ParseError
 from mainuser.models import Userprofile
 from jobs.serializers import JobsGetSerializer
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404,get_list_or_404
 import copy
 from mainuser.permissions import IsOwnerOrReadOnly
 from slugify import slugify
@@ -28,9 +29,17 @@ class BlogView(viewsets.ModelViewSet):
 
         
     def perform_create(self, serializer):
-        slug = slugify('this blog')
+        data = self.request.data
+        slug = slugify(data['title'])
+        
+        blog = get_object_or_404(Blog,slug = slug)
+        print(blog)
+
         profile = get_object_or_404(Userprofile,user = self.request.user)
-        serializer.save(user = self.request.user,profile = profile,slug = slug)
+        try:
+            serializer.save(user = self.request.user,profile = profile,slug=slug)
+        except Exception as e:
+            raise ParseError(e)
     def retrieve(self, request, pk=None):
         queryset = Blog.objects.all()
         blog = get_object_or_404(queryset, pk=pk)
