@@ -26,19 +26,10 @@ class BlogView(viewsets.ModelViewSet):
     serializer_class = BlogPostSerializers
     queryset = Blog.objects.all()
 
-    
-
-    # def list(self,request):
-    #     queryset = Blog.objects.all()
-        
-    #     serializer = BlogsGetSerializers(queryset)
-
-    #     return Response(serializer.data)
         
     def perform_create(self, serializer):
         
         profile = get_object_or_404(Userprofile,user = self.request.user)
-        
         serializer.save(user = self.request.user,profile = profile)
     def retrieve(self, request, pk=None):
         queryset = Blog.objects.all()

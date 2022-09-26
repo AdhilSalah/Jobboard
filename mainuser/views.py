@@ -23,41 +23,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.exceptions import ParseError
 from django.conf import settings
 from django.core.mail import send_mail
-
-
-
-
-
-
-
-
-
-        
-        
-
 from rest_framework.views import exception_handler
-
-
-def custom_exception_handler(exc, context):
-    # Call REST framework's default exception handler first,
-    # to get the standard error response.
-    response = exception_handler(exc, context)
-
-    # Update the structure of the response data.
-    if response is not None:
-        customized_response = {}
-        customized_response['errors'] = {}
-
-        for key, value in response.data.items():
-            print(key)
-            error = {'field': key, 'message': 'error'}
-            customized_response['errors'].add(error)
-
-        response.data = customized_response
-
-    return response
-
-
 
 
 
@@ -68,15 +34,9 @@ class UserRegistrationView(viewsets.ModelViewSet):
 
     def create(self, request):
         serializer = self.get_serializer(data=request.data)
-
-        
-        
-        
         if serializer.is_valid():
             temp = serializer.validated_data
-        
             serializer.save()
-
             email = temp.pop('email')
             
             try:
@@ -90,45 +50,15 @@ class UserRegistrationView(viewsets.ModelViewSet):
                     'message':'email address dot exist'
                 }
                 return Response(response)    
-
             return Response(serializer.data,status.HTTP_201_CREATED)
         else:
-
-            
-        
-            
             return Response(serializer.errors)    
-
-            
-
-        
-        
 
     def list(self, request, *args, **kwargs):
         self.permission_classes = (IsAdminUser,)
         return super().list(request, *args, **kwargs)
 
-
-
-        
-
-                
-
-
-
-    
-
-        
-
-
-
-
-        
-
-
 class signin(APIView):
-
-
     permission_classes = (AllowAny,)
     authentication_classes = ()
 
@@ -155,23 +85,8 @@ class signin(APIView):
             return Response({'message':serializer.errors},status=400)      
 
 
-'''for  auth you must provide
-{
- "client_id":"lesL0tHw2VuxWdqczKeSEouvCaTlDKWXN5kqeWB8",
- "client_secret":"ExrRhhu3sPsnzNLLRfY3Ly4b3tQky4Hy4ocJqLkKHvh9i4CyfpciG6fwPDQAA2zHD9jyhdmjbLHe22WzLtF9XEjNr2y2bvINvPPFX6YQ13cEUMOs1vJJMtJCaR3MNKDz",
- "grant_type":"password",
- "username":"adhilsalah06@gmail.com",
- "password":"123"
-}
 
-for refresh token  on path auth/token
-
-
-"client_id":"7eHbIvcIBsGKD3mb0P4C1OHu1RrSnsLzlHvuaUu9",
-"client_secret":"Ehes1gWXMKLO4gFUrQtYWSHsz8iXpBTLk86568r7RVpvybln2m9gyoNzt9aM5ew2SKC0mcZ0FyyxZ75UT0FwdYD84Q0xQ0ditJOjV97y9IpKagrCfbtLyw8eeWuQxbrh",
-"grant_type":"refresh_token",
-"refresh_token":"token",
-'''     
+    
 
 class CurrentUser(APIView):
     permission_classes = [IsAuthenticated,IsOwnerOrReadOnly]

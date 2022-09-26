@@ -9,7 +9,6 @@ from jobs.serializers import JobsGetSerializer
 class BlogPostSerializers(serializers.ModelSerializer):
 
     class Meta:
-
         model = Blog
         fields = ['id','title', 'content']
 

@@ -1,3 +1,4 @@
+from pickle import TRUE
 from django.db import models
 
 # Create your models here.
@@ -31,7 +32,7 @@ class Blog(models.Model):
     user = models.ForeignKey(NewUser,on_delete=models.CASCADE)
     profile = models.ForeignKey(Userprofile,on_delete=models.CASCADE)
     title = models.CharField(max_length=225)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(null=True,blank=True)
     content = models.TextField()
     like = models.PositiveBigIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -51,9 +52,8 @@ class BlogReaction(models.Model):
     blog = models.ForeignKey(Blog,on_delete=models.CASCADE,null=True)
     user = models.ForeignKey(NewUser,on_delete=models.CASCADE,null=True)
     type = models.CharField(max_length=1,choices=FEEDBACK_OPTIONS)
-
     def __str__(self):
-
+        
         return self.blog.title
 
 class BlogComment(models.Model):
