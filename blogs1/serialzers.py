@@ -29,6 +29,7 @@ class BlogsGetSerializers(serializers.ModelSerializer):
         
         DP = str(obj.profile.profile_photo)
         response = {
+            'First Name':obj.profile.first_name,
             'Last Name': obj.profile.last_name,
             'DP': DP
 
@@ -82,6 +83,7 @@ class BlogsGetDetailsSerializers(serializers.ModelSerializer):
 
         DP = str(obj.profile.profile_photo)
         response = {
+            'First Name':obj.profile.first_name,
             'Last Name': obj.profile.last_name,
             'DP': DP
 

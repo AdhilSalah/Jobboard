@@ -21,7 +21,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 '''operations on a blog'''
 class BlogView(viewsets.ModelViewSet):
 
-    permission_classes = [AllowAny,IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated,IsOwnerOrReadOnly]
     authentication_classes = [JWTAuthentication]
     serializer_class = BlogPostSerializers
     queryset = Blog.objects.all()
@@ -35,13 +35,11 @@ class BlogView(viewsets.ModelViewSet):
 
     #     return Response(serializer.data)
         
-
     def perform_create(self, serializer):
         
         profile = get_object_or_404(Userprofile,user = self.request.user)
         
         serializer.save(user = self.request.user,profile = profile)
-
     def retrieve(self, request, pk=None):
         queryset = Blog.objects.all()
         blog = get_object_or_404(queryset, pk=pk)

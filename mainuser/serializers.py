@@ -14,20 +14,9 @@ class UserCreateSerializer(serializers.ModelSerializer):
         extra_kwargs={'password':{'write_only':True}
         }
 
-
-    
-
-
-
-
-
-
 class SignInSerializer(serializers.Serializer):
     email = serializers.CharField(max_length=255, required=True)
     password = serializers.CharField(max_length=255, required=True, write_only=True)
-
-
-
 
 class EducationSerializer(serializers.ModelSerializer):
 
@@ -36,39 +25,22 @@ class EducationSerializer(serializers.ModelSerializer):
         model = Education
 
         fields =('university','department','remark','start_date','end_date')
-        
 
-        
 class ExperienceSerializer(serializers.ModelSerializer):
-
     class Meta:
-
         model = Experience
-
         fields =('company','position','remark_e','start_date_e','end_date_e')
-
         def create(self,validated_data):
             user_exp = Experience.objects.create(**validated_data)
-
             return user_exp
-
-
-
 class UserProfileCreateSerializer(serializers.ModelSerializer):
 
     # education = EducationSerializer(required = False)
     # experience = ExperienceSerializer(required = False)
-
-
     class Meta:
 
         model = Userprofile
         fields = ('id','first_name','last_name','date_of_birth','profile_photo','cv','about')   
-
-        
-
-
-
 
 
 class EducationGetSerializer(serializers.ModelSerializer):
