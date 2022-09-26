@@ -28,9 +28,9 @@ class BlogView(viewsets.ModelViewSet):
 
         
     def perform_create(self, serializer):
-        
+        slug = slugify('this blog')
         profile = get_object_or_404(Userprofile,user = self.request.user)
-        serializer.save(user = self.request.user,profile = profile)
+        serializer.save(user = self.request.user,profile = profile,slug = slug)
     def retrieve(self, request, pk=None):
         queryset = Blog.objects.all()
         blog = get_object_or_404(queryset, pk=pk)
