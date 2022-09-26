@@ -37,10 +37,9 @@ class BlogView(viewsets.ModelViewSet):
         
 
     def perform_create(self, serializer):
-
-
-        profile = Userprofile.objects.get(user=self.request.user)
-        print(self.request.user)
+        
+        profile = get_object_or_404(Userprofile,user = self.request.user)
+        
         serializer.save(user = self.request.user,profile = profile)
 
     def retrieve(self, request, pk=None):
@@ -70,6 +69,7 @@ class PostLikeView(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication,]
     serializer_class = LikePostSerializer
     queryset = BlogReaction.objects.all()
+    
     
     def perform_create(self, serializer):
         like = copy.deepcopy(serializer.validated_data)
