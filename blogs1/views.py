@@ -31,10 +31,6 @@ class BlogView(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         data = self.request.data
         slug = slugify(data['title'])
-        
-        blog = get_object_or_404(Blog,slug = slug)
-        print(blog)
-
         profile = get_object_or_404(Userprofile,user = self.request.user)
         try:
             serializer.save(user = self.request.user,profile = profile,slug=slug)
