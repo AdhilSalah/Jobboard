@@ -27,3 +27,5 @@ class JobsPosting(models.Model):
     def __str__(self):
 
         return self.job_title       
+class wow(models.Model):
+    name = models.ForeignKey(NewUser,on_delete)
